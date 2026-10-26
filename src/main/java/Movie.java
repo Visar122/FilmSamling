@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 public class Movie {
     private String title;
     private String director;
@@ -5,6 +8,7 @@ public class Movie {
     private boolean inColor;
     private int lengthInMinutes;
     private String genre;
+    private LocalDate lastWatched;   // null = filmen er aldrig set
 
     public Movie(String title, String director, int yearCreated, boolean inColor,
                  int lengthInMinutes, String genre) {
@@ -37,8 +41,18 @@ public class Movie {
     public String getGenre() { return genre; }
     public void setGenre(String genre) { this.genre = genre; }
 
+    public LocalDate getLastWatched() { return lastWatched; }
 
+    public boolean hasBeenWatched() {
+        return lastWatched != null;
+    }
 
+    public void markAsWatched(LocalDate date) {
+        lastWatched = date;
+    }
 
-
+    // Antal dage fra lastWatched til today. Må kun kaldes, hvis hasBeenWatched() er true.
+    public long getDaysSinceWatched(LocalDate today) {
+        return ChronoUnit.DAYS.between(lastWatched, today);
+    }
 }

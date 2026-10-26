@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -27,7 +28,7 @@ public class MovieCollection {
         String search=searchText.toLowerCase();
         for(Movie movie :movies){
             if(movie.GetTitle().toLowerCase().contains(search)){
-                 result.add(movie);
+                result.add(movie);
             }
         }
         return  result;
@@ -51,6 +52,17 @@ public class MovieCollection {
     public boolean deleteMovie(Movie movie){
 
         return movies.remove(movie);
+    }
+
+    // Finder alle film, der aldrig er set, eller som sidst blev set før date
+    public ArrayList<Movie> getMoviesNotWatchedSince(LocalDate date) {
+        ArrayList<Movie> result = new ArrayList<>();
+        for (Movie movie : movies) {
+            if (!movie.hasBeenWatched() || movie.getLastWatched().isBefore(date)) {
+                result.add(movie);
+            }
+        }
+        return result;
     }
 
 }
