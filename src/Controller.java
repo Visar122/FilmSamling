@@ -13,7 +13,7 @@ public class Controller {
      public ArrayList<Movie> getMovies(){
         return movieCollection.getMovies();
      }
-     public ArrayList<Movie> searchMovie(String searchText){
+     public ArrayList<Movie> searchMovies(String searchText){
         return movieCollection.searchMovies(searchText);
      }
      public boolean editMovie(Movie movie,String title, String director, int yearCreated,

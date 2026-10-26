@@ -3,5 +3,9 @@ public  static void main(String[] args) {
 
     System.out.println("Velkommen til FilmSamling");
 
+    UserInterface Ui=new UserInterface();
+
+    Ui.StartProgram();
+
 }
 }
