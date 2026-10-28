@@ -1,6 +1,8 @@
 import java.awt.*;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
@@ -20,7 +22,7 @@ public class UserInterface {
             System.out.println("3. Søg film");
             System.out.println("4. Redigér en film");
             System.out.println("5. Slet en film");
-            System.out.println("6. Markér en film som set i dag");
+            System.out.println("6. Markér en film som set ");
             System.out.println("7. Find film, du ikke har set længe");
             System.out.println("0. Afslut");
             System.out.print("Valg : ");
@@ -51,18 +53,26 @@ public class UserInterface {
     }
 
     private void CreateMovie() {
-        System.out.print("Titel: ");
-        String title = scanner.nextLine();
-        System.out.print("Director: ");
-        String director = scanner.nextLine();
+
+        String title = readString("Title : ");
+
+        String director = readString("Director: ");
         int year = readInt("Årstal: ");
+
         boolean inColor = ReadYesNo("Er Filmen i farver ja/nej : ", null);
         int length = readInt("Længde i minutter: ");
-        System.out.print("Genre: ");
-        String genre = scanner.nextLine();
 
-        controller.AddMovie(title, director, year, inColor, length, genre);
-        System.out.println("Filmen -" + title + "- er tilføjet");
+        String genre = readString("Genre: ");
+        ;
+
+
+        try {
+            controller.AddMovie(title, director, year, inColor, length, genre);
+            System.out.println("Filmen ( " + title + ") er tilføjet");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Filmen blev ikke oprettet: " + e.getMessage());
+        }
+
     }
 
     private void ShowAllMovies() {
@@ -100,71 +110,72 @@ public class UserInterface {
         }
 
         for (int i = 0; i < result.size(); i++) {
-            System.out.println((i + 1) + ". " + result.get(i).GetTitle());
+            System.out.println((i + 1) + ". " + result.get(i).getTitle());
             ; // resultt.get(index) tager filmen på det sted: tager så  result.get(0) // The Godfather          result.get(1)   // Godzilla
             // i+1 fordi fx the Godfather index det 0= så brugeren  ser 1.godfather  i stedet for 0.godfather
         }
 
-         while(true){
-        int number = readInt("Vælg nummer  ( (0) til at fortrud) : ");
+        while (true) {
+            int number = readInt("Vælg nummer  ( (0) til at fortrud) : ");
 
 
-        if (number == 0) {
-            System.out.println("Fortrudt");
-            return null;
+            if (number == 0) {
+                System.out.println("Fortrudt");
+                return null;
+            }
+            if (number >= 1 && number <= result.size()) {
+                return result.get(number - 1);
+            }
+            System.out.println("Nummeret -" + number + "er ikke på listen - Prøv igen ");
         }
-        if (number >= 1 && number <= result.size()) {
-            return result.get(number - 1);
-        }
-        System.out.println("Nummeret -" + number + "er ikke på listen - Prøv igen ");
-         }
     }
 
-    private void EditMovie(){
-        Movie movie=FindtheMovie();
-        if (movie==null)return;
+    private void EditMovie() {
+        Movie movie = FindtheMovie();
+        if (movie == null) return;
 
         System.out.println("Tryk Enter for at beholde den nuværende værdi.");
 
-        System.out.print("Title (" +movie.GetTitle() +") : ");
-        String title=scanner.nextLine();
-        if (title.isBlank()) title = movie.GetTitle();
+        System.out.print("Title (" + movie.getTitle() + ") : ");
+        String title = scanner.nextLine();
+        if (title.isBlank()) title = movie.getTitle();
 
-        System.out.print("Director (" +movie.getDirector() +") : ");
-        String director=scanner.nextLine();
+        System.out.print("Director (" + movie.getDirector() + ") : ");
+        String director = scanner.nextLine();
         if (director.isBlank()) director = movie.getDirector();
 
         int year = readIntOrDefault("Årstal (" + movie.getYearCreated() + "): ", movie.getYearCreated());
 
 
-        boolean inColor = ReadYesNo("i farver ? ja/nej("+ colorText(movie)+ "):",movie.isInColor());
+        boolean inColor = ReadYesNo("i farver ? ja/nej(" + colorText(movie) + "):", movie.isInColor());
 
         int length = readIntOrDefault("Længde i minutter (" + movie.getLengthInMinutes() + "): ", movie.getLengthInMinutes());
 
         System.out.print("Genre (" + movie.getGenre() + "): ");
-        String genre=scanner.nextLine();
-        if(genre.isBlank())genre=movie.getGenre();
+        String genre = scanner.nextLine();
+        if (genre.isBlank()) genre = movie.getGenre();
 
-        if(controller.editMovie(movie,title,director,year,inColor,length,genre)){
-            System.out.println("Filmen er opdateret");
-            printMovie(movie);
+        try {
+            if (controller.editMovie(movie, title, director, year, inColor, length, genre)) {
+                System.out.println("Filmen er opdateret");
+                printMovie(movie);
+            } else {
+                System.out.println("Filmen kunne ikke findes.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Filmen blev ikke ændret " + e.getMessage());
         }
-        else {
-            System.out.println("Filmen kunne ikke findes.");
-        }
-
-
 
 
     }
 
-    private void DeleteMovie(){
-        Movie movie=FindtheMovie();
+    private void DeleteMovie() {
+        Movie movie = FindtheMovie();
 
-        if(movie==null)return;
+        if (movie == null) return;
 
 
-        if (ReadYesNo("Er  du sikker på at du vil slette ("+ movie.GetTitle() +") ja/nej : " ,null )) {
+        if (ReadYesNo("Er  du sikker på at du vil slette (" + movie.getTitle() + ") ja/nej : ", null)) {
             if (controller.deleteMovie(movie)) {
                 System.out.println("Filmen er slettet.");
             } else {
@@ -178,7 +189,7 @@ public class UserInterface {
 
     private void printMovie(Movie movie) {
         System.out.println("----------------------------");
-        System.out.println("Titel:      " + movie.GetTitle());
+        System.out.println("Titel:      " + movie.getTitle());
         System.out.println("Instruktør: " + movie.getDirector());
         System.out.println("Årstal:     " + movie.getYearCreated());
         System.out.println("Farve:      " + colorText(movie));
@@ -186,6 +197,7 @@ public class UserInterface {
         System.out.println("Genre:      " + movie.getGenre());
         System.out.println("Sidst set:  " + lastWatchedText(movie));
     }
+
     private String colorText(Movie movie) {
         return movie.isInColor() ? "farve" : "sort-hvid";
     }
@@ -194,9 +206,13 @@ public class UserInterface {
     private void markMovieAsWatched() {
         Movie movie = FindtheMovie();
         if (movie == null) return;
-
-        controller.markAsWatched(movie);
-        System.out.println(movie.GetTitle() + " er markeret som set " + movie.getLastWatched().format(DATE_FORMAT) + ".");
+        LocalDate date = readDate("Dato (dd-mm-åååå, Enter = i dag): ");
+        try {
+            controller.markAsWatched(movie, date);
+            System.out.println(movie.getTitle() + " er markeret som set " + date.format(DATE_FORMAT) + ".");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Filmen blev ikke markeret: " + e.getMessage());
+        }
     }
 
     // vis film, der ikke er set i et antal dage
@@ -210,7 +226,7 @@ public class UserInterface {
         }
         System.out.println("Film, du ikke har set i " + days + " dage eller aldrig har set:");
         for (Movie movie : movies) {
-            System.out.println("  " + movie.GetTitle() + " – sidst set: " + lastWatchedText(movie));
+            System.out.println("  " + movie.getTitle() + " – sidst set: " + lastWatchedText(movie));
         }
     }
 
@@ -237,6 +253,17 @@ public class UserInterface {
         }
     }
 
+    private String readString(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) {
+                return input;
+            }
+            System.out.println("Feltet må ikke være tomt. Prøv igen.");
+        }
+    }
+
     // som readInt, men Enter beholder den nuværende værdi
     private int readIntOrDefault(String prompt, int defaultValue) {
         while (true) {
@@ -251,21 +278,33 @@ public class UserInterface {
         }
     }
 
-    public  boolean ReadYesNo(String prompt,Boolean Value){
-        while (true){
+    public boolean ReadYesNo(String prompt, Boolean Value) {
+        while (true) {
             System.out.print(prompt);
-            String input=scanner.nextLine().trim().toLowerCase();
+            String input = scanner.nextLine().trim().toLowerCase();
 
             try {
-                if (input.isEmpty() && Value!=null)return Value;
-                if (input.equals("ja")||input.equals("j"))return true;
-                if (input.equals("nej")||input.equals("n"))return false;
+                if (input.isEmpty() && Value != null) return Value;
+                if (input.equals("ja") || input.equals("j")) return true;
+                if (input.equals("nej") || input.equals("n")) return false;
                 throw new IllegalArgumentException("\"" + input + "\" er ikke ja eller nej.");
-            }catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage() + " prøv igen.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage() + "prøv igen.");
             }
 
         }
     }
 
+    private LocalDate readDate(String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) return LocalDate.now();
+            try {
+                return LocalDate.parse(input, DATE_FORMAT);
+            } catch (DateTimeException e) {
+                System.out.println("\"" + input + "\" er ikke en dato på formen dd-mm-åååå. Prøv igen.");
+            }
+        }
+    }
 }

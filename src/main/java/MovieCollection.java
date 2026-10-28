@@ -6,9 +6,11 @@ import java.util.Locale;
 public class MovieCollection {
     private ArrayList<Movie> movies;
 
+
     public MovieCollection(){
         movies = new ArrayList<>();
     }
+
 
     public void addMovie(String title,String director,int yearCreated,boolean inColor,int lengthInMinutes,String genre){
         Movie movie= new Movie(title,director,yearCreated,inColor,lengthInMinutes,genre);
@@ -27,7 +29,7 @@ public class MovieCollection {
         ArrayList<Movie>result= new ArrayList<>();
         String search=searchText.toLowerCase();
         for(Movie movie :movies){
-            if(movie.GetTitle().toLowerCase().contains(search)){
+            if(movie.getTitle().toLowerCase().contains(search)){
                 result.add(movie);
             }
         }
@@ -38,7 +40,8 @@ public class MovieCollection {
         if(!movies.contains(movie)){
             return false;
         }
-        movie.SetTitle(title);
+        new Movie(title, director, yearCreated, inColor, lengthInMinutes, genre);
+        movie.setTitle(title);
         movie.setDirector(director);
         movie.setYearCreated(yearCreated);
         movie.setInColor(inColor);

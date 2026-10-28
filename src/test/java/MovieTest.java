@@ -42,4 +42,10 @@ class MovieTest {
         // Assert
         assertEquals(26, days);
     }
+    @Test
+    void yearBefore1888IsRejected() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Movie("Jaws", "Steven Spielberg", 1887, true, 124, "Thriller"));
+    }
+
 }

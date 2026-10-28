@@ -44,4 +44,19 @@ class MovieCollectionTest {
         assertFalse(result.contains(onTheDate));
         assertFalse(result.contains(after));
     }
+    @Test
+    void editWithInvalidValueChangesNothing() {
+        MovieCollection collection = new MovieCollection();
+        // Arrange
+        Movie casablanca = collection.searchMovies("Casablanca").get(0);
+
+        // Act: ny titel er fin, men årstallet er ugyldigt
+        assertThrows(IllegalArgumentException.class,
+                () -> collection.editMovie(casablanca, "Casablanca 2", "Michael Curtiz", 1800, false,
+                        102, "Drama"));
+
+        // Assert: titlen er IKKE ændret – filmen er ikke blevet halvt redigeret
+        assertEquals("Casablanca", casablanca.getTitle());
+        assertEquals(1942, casablanca.getYearCreated());
+    }
 }

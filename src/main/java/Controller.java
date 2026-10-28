@@ -24,8 +24,8 @@ public class Controller {
     public boolean deleteMovie (Movie movie){
         return movieCollection.deleteMovie(movie);
     }
-    public void markAsWatched(Movie movie) {
-        movie.markAsWatched(LocalDate.now());
+    public void markAsWatched(Movie movie,LocalDate date) {
+        movie.markAsWatched(date);
     }
     public ArrayList<Movie> getMoviesNotWatchedForDays(int days) {
         LocalDate limit = LocalDate.now().minusDays(days);
