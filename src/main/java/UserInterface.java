@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,7 @@ public class UserInterface {
     private Controller controller = new Controller();
 
     public void StartProgram() {
+        loadMovies();
         boolean running = true;
         while (running) {
 
@@ -39,6 +41,7 @@ public class UserInterface {
 
 
                 case "0" -> {
+                    SaveMovies();
                     System.out.println("Farvel!");
                     running = false;
                 }
@@ -67,7 +70,8 @@ public class UserInterface {
 
 
         try {
-            controller.AddMovie(title, director, year, inColor, length, genre);
+            Movie movie = new Movie(title, director, year, inColor, length, genre);
+            controller.AddMovie(movie);
             System.out.println("Filmen ( " + title + ") er tilføjet");
         } catch (IllegalArgumentException e) {
             System.out.println("Filmen blev ikke oprettet: " + e.getMessage());
@@ -305,6 +309,30 @@ public class UserInterface {
             } catch (DateTimeException e) {
                 System.out.println("\"" + input + "\" er ikke en dato på formen dd-mm-åååå. Prøv igen.");
             }
+        }
+    }
+    private void loadMovies(){
+        try {
+            int count=controller.loadMovies();
+            System.out.println("Indlæste " + count + " film ");
+            int skipped=controller.getSkippedLineCount();
+            if(skipped>0){
+                System.out.println("Advarsel: " + skipped + "  linjer i filen blev sprunget over.");
+            }
+        }catch (FileNotFoundException e){
+            System.out.println("Kunne ikke læse filen: " + e.getMessage());
+        }
+    }
+
+    private void SaveMovies(){
+        try {
+            if(controller.SaveMoviesifChanged()){
+                System.out.println("Samlingen er gemt");
+            }
+            else {System.out.println("Ingen ændringer - intet at gemme");}
+
+        }catch (FileNotFoundException e){
+            System.out.println("Kunne ikke gemme filen " + e.getMessage());
         }
     }
 }

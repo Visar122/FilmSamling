@@ -11,7 +11,7 @@ class MovieCollectionTest {
     void neverWatchedMovieIsIncluded() {
         // Arrange
         MovieCollection collection = new MovieCollection();
-        collection.addMovie("Psycho", "Alfred Hitchcock", 1960, false, 109, "Horror");
+        collection.addMovie(new Movie("Psycho", "Alfred Hitchcock", 1960, false, 109, "Horror"));
         Movie psycho = collection.getMovies().get(0);
 
         // Act
@@ -26,9 +26,9 @@ class MovieCollectionTest {
         // Arrange
         LocalDate limit = LocalDate.of(2025, 10, 1);
         MovieCollection collection = new MovieCollection();
-        collection.addMovie("Jaws", "Steven Spielberg", 1975, true, 124, "Thriller");
-        collection.addMovie("Psycho", "Alfred Hitchcock", 1960, false, 109, "Horror");
-        collection.addMovie("Godzilla", "Ishiro Honda", 1954, false, 96, "Sci-fi");
+        collection.addMovie(new Movie("Jaws", "Steven Spielberg", 1975, true, 124, "Thriller"));
+        collection.addMovie(new Movie("Psycho", "Alfred Hitchcock", 1960, false, 109, "Horror"));
+        collection.addMovie(new Movie("Godzilla", "Ishiro Honda", 1954, false, 96, "Sci-fi"));
         Movie before = collection.getMovies().get(0);
         Movie onTheDate = collection.getMovies().get(1);
         Movie after = collection.getMovies().get(2);
