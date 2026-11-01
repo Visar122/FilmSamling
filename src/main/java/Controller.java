@@ -62,7 +62,7 @@ public class Controller {
         if(!changed){
             return false;
         }
-        filehandler.SaveMovies(movieCollection.getMovies());
+        filehandler.saveMovies(movieCollection.getMovies());
         changed=false;
         return true;
     }

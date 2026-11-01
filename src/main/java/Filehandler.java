@@ -16,7 +16,7 @@ public class Filehandler {
         this.fileName=fileName;
     }
     // ---------- SAVE ----------
-    public void SaveMovies(ArrayList<Movie> movies)throws FileNotFoundException{
+    public void saveMovies(ArrayList<Movie> movies)throws FileNotFoundException{
         PrintStream out=new PrintStream(new File(fileName));
         out.println(HEADER);
 
