@@ -2,6 +2,7 @@ package ui;
 
 import domainmodel.Controller;
 import domainmodel.Movie;
+import domainmodel.SortField;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
@@ -15,7 +16,7 @@ import java.util.Scanner;
 
 public class UserInterface {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
     private Controller controller = new Controller();
 
     public void startProgram() {
@@ -31,6 +32,7 @@ public class UserInterface {
             System.out.println("5. Slet en film");
             System.out.println("6. Markér en film som set ");
             System.out.println("7. Find film, du ikke har set længe");
+            System.out.println("8. Vis film sorteret efter ...");
             System.out.println("0. Afslut");
             System.out.print("Valg : ");
 
@@ -43,6 +45,7 @@ public class UserInterface {
                 case "5" -> DeleteMovie();
                 case "6" -> markMovieAsWatched();
                 case "7" -> showMoviesNotWatched();
+                case "8" -> showMoviesSorted();
 
 
                 case "0" -> {
@@ -85,7 +88,7 @@ public class UserInterface {
     }
 
     private void ShowAllMovies() {
-        ArrayList<Movie> movies = controller.getMovies();
+        ArrayList<Movie> movies = controller.getMoviesSortedByTitle(); // US16: alfabetisk efter titel
         if (movies.isEmpty()) {
             System.out.println("Der er ingen film");
             return;
@@ -340,4 +343,58 @@ public class UserInterface {
             System.out.println("Kunne ikke gemme filen " + e.getMessage());
         }
     }
+
+    // US17
+    private void showMoviesSorted() {
+        SortField field = readSortField("Sortér først efter:", false);
+
+
+        ArrayList<Movie> movies = controller.getMoviesSortedBy(field);
+
+
+        if (movies.isEmpty()) {
+            System.out.println("Der er ingen film");
+            return;
+        }
+        for (Movie movie : movies) {
+            printMovie(movie);
+        }
+    }
+
+    // Viser en nummereret liste over SortField-værdierne. Med allowNone betyder 0 "ingen" (returnerer null)
+    private SortField readSortField(String prompt, boolean allowNone) {
+        SortField[] fields = SortField.values();
+        System.out.println(prompt);
+        for (int i = 0; i < fields.length; i++) {
+            System.out.println("  " + (i + 1) + ". " + sortFieldText(fields[i]));
+        }
+        if (allowNone) {
+            System.out.println("  0. Ingen");
+        }
+        while (true) {
+            int number = readInt("Vælg: ");
+            if (allowNone && number == 0) {
+                return null;
+            }
+            if (number >= 1 && number <= fields.length) {
+                return fields[number - 1];
+            }
+            System.out.println("Nummeret " + number + " er ikke på listen. Prøv igen.");
+        }
+    }
+
+
+    private String sortFieldText(SortField field) {
+        return switch (field) {
+            case TITLE -> "titel";
+            case DIRECTOR -> "instruktør";
+            case YEAR -> "årstal";
+            case LENGTH -> "længde";
+            case GENRE -> "genre";
+        };
+    }
+
+
+
+
 }

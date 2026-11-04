@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MovieCollection {
     private ArrayList<Movie> movies;
@@ -67,6 +69,19 @@ public class MovieCollection {
             }
         }
         return result;
+    }
+
+    // Returnerer en sorteret KOPI – selve samlingen beholder sin rækkefølge
+    public ArrayList<Movie> getMoviesSortedByTitle() {
+        ArrayList<Movie> sorted = new ArrayList<>(movies);
+        Collections.sort(sorted);   // bruger Movie.compareTo
+        return sorted;
+    }
+
+    public ArrayList<Movie> getMoviesSorted(Comparator<Movie> comparator) {
+        ArrayList<Movie> sorted = new ArrayList<>(movies);
+        sorted.sort(comparator);
+        return sorted;
     }
 
 }

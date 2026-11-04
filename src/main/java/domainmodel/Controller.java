@@ -1,9 +1,12 @@
 package domainmodel;
 
 import datasource.FileHandler;
+import domainmodel.Comparator.*;
+
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Controller {
 
@@ -72,4 +75,27 @@ public class Controller {
     public int getSkippedLineCount() {
         return filehandler.getSkippedLineCount();
     }
+
+
+    public ArrayList<Movie> getMoviesSortedByTitle() {
+        return movieCollection.getMoviesSortedByTitle();
+    }
+
+    public ArrayList<Movie> getMoviesSortedBy(SortField field) {
+        return movieCollection.getMoviesSorted(comparatorFor(field));
+    }
+
+
+
+    // Det ENESTE sted, hvor brugerens valg oversættes til en comparator
+    private Comparator<Movie> comparatorFor(SortField field) {
+        return switch (field) {
+            case TITLE -> new TitleComparator();
+            case DIRECTOR -> new DirectorComparator();
+            case YEAR -> new YearComparator();
+            case LENGTH -> new LengthComparator();
+            case GENRE -> new GenreComparator();
+        };
+    }
+
 }

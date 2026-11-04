@@ -33,6 +33,9 @@ classDiagram
             -readDate(String prompt) LocalDate
             -loadMovies()
             -SaveMovies()
+            -showMoviesSorted()
+            -readSortField(String prompt, boolean allowNone) SortField
+            -sortFieldText(SortField field) String
         }
     }
 
@@ -51,6 +54,9 @@ classDiagram
             +loadMovies() int
             +SaveMoviesifChanged() boolean
             +getSkippedLineCount() int
+            +getMoviesSortedByTitle() ArrayList~Movie~
+            +getMoviesSortedBy(SortField field) ArrayList~Movie~
+            -comparatorFor(SortField field) Comparator~Movie~
         }
 
         class MovieCollection {
@@ -62,6 +68,8 @@ classDiagram
             +editMovie(Movie movie, ...) boolean
             +deleteMovie(Movie movie) boolean
             +getMoviesNotWatchedSince(LocalDate date) ArrayList~Movie~
+            +getMoviesSortedByTitle() ArrayList~Movie~
+            +getMoviesSorted(Comparator~Movie~ comparator) ArrayList~Movie~
         }
 
         class Movie {
@@ -89,6 +97,7 @@ classDiagram
             +hasBeenWatched() boolean
             +markAsWatched(LocalDate date)
             +getDaysSinceWatched(LocalDate today) long
+            +compareTo(Movie other) int
         }
 
         class Genre {
@@ -98,6 +107,41 @@ classDiagram
             Action
             Fantasy
         }
+
+        class SortField {
+            <<enumeration>>
+            TITLE
+            DIRECTOR
+            YEAR
+            LENGTH
+            GENRE
+        }
+
+        class TitleComparator {
+            +compare(Movie movie1, Movie movie2) int
+        }
+        class DirectorComparator {
+            +compare(Movie movie1, Movie movie2) int
+        }
+        class YearComparator {
+            +compare(Movie movie1, Movie movie2) int
+        }
+        class LengthComparator {
+            +compare(Movie movie1, Movie movie2) int
+        }
+        class GenreComparator {
+            +compare(Movie movie1, Movie movie2) int
+        }
+    }
+
+    class Comparable~Movie~ {
+        <<interface>>
+        +compareTo(Movie other) int
+    }
+
+    class Comparator~Movie~ {
+        <<interface>>
+        +compare(Movie movie1, Movie movie2) int
     }
 
     namespace datasource {
@@ -120,4 +164,15 @@ classDiagram
     Controller --> FileHandler
     MovieCollection o-- Movie : indeholder
     FileHandler ..> Movie : opretter
+
+    UserInterface ..> SortField : vælger
+    Controller ..> SortField
+    Controller ..> Comparator~Movie~ : opretter
+    MovieCollection ..> Comparator~Movie~ : bruger
+    Comparable~Movie~ <|.. Movie
+    Comparator~Movie~ <|.. TitleComparator
+    Comparator~Movie~ <|.. DirectorComparator
+    Comparator~Movie~ <|.. YearComparator
+    Comparator~Movie~ <|.. LengthComparator
+    Comparator~Movie~ <|.. GenreComparator
 ```
